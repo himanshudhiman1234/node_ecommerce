@@ -5,11 +5,15 @@
         const {PostLogin} = require("../controllers/registerController")
         const {postLoginData} = require("../controllers/LoginController")
         const verifyToken = require('../middleware/jwtToken');
+        const cookieParser = require('cookie-parser');
+
         require('../config/db');
         const hbs = require("hbs");
        
 
         const app = express();
+        app.use(cookieParser());
+
         const PORT = 8000;
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,7 +34,7 @@
 
 
 
-        app.get('/seller-dashboard',(req,res)=>{
+        app.get('/seller-dashboard',verifyToken,(req,res)=>{
             res.render('seller/index')
         })
 
@@ -46,6 +50,15 @@
         app.get('/login', (req, res) => {
             res.render('login/login');
         });
+
+        app.get('/logout', (req, res) => {
+            // Clear the JWT cookie
+            res.clearCookie('jwt');
+            // Redirect to the login page or any other appropriate page
+            res.redirect('/login');
+        });
+
+
         app.post('/postLoginData',postLoginData)
 
         // Define route for home page
