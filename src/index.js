@@ -4,8 +4,10 @@
         const path = require("path");
         const {PostLogin} = require("../controllers/registerController")
         const {postLoginData} = require("../controllers/LoginController")
+        const {BookForm} = require("../controllers/sellerBookForm")
         const verifyToken = require('../middleware/jwtToken');
         const cookieParser = require('cookie-parser');
+        const upload = require('../middleware/multerConfig');
 
         require('../config/db');
         const hbs = require("hbs");
@@ -34,10 +36,26 @@
 
 
 
+
+        //routes
+
         app.get('/seller-dashboard',verifyToken,(req,res)=>{
             res.render('seller/index')
         })
 
+        app.get('/book-form',verifyToken,(req,res)=>{
+            res.render('seller/bookform')
+        })
+
+        app.get('/books',verifyToken,(req,res)=>{
+            res.render('seller/showbooks')
+        })
+
+        app.post('/post-book-form',verifyToken,upload.single('image'),BookForm)
+        
+
+
+        //register
         app.get('/register',(req,res)=>{
             res.render('register/register',{errorMessage:req.query.error})
         })
